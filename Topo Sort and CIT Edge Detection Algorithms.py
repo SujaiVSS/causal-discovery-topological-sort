@@ -189,6 +189,7 @@ def Topo_CIT_Causal_Discovery(data):
     neighbors = data.shape[1]-1
     #Obtain Reversed Topological Sort
     sort = topo_sort(data,b, neighbors)
+    print(sort)
     #Obtain parent set
     parents, children = path_tracing(sort, data)
     #Return DAG matrix
@@ -203,6 +204,6 @@ def test(n=1000,a=-4,b=5,c=-3):
      m = 3*w**2 + np.random.normal(1,0.5,n)
      return x,y,z,w,m
 
-x,y,z,w,m = test(n=1000)
+x,y,z,w,m = test(n=1500)
 table = np.column_stack([x,y,z,w,m])
 print(Topo_CIT_Causal_Discovery(table))
