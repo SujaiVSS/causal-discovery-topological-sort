@@ -185,7 +185,7 @@ def Topo_CIT_Causal_Discovery(data):
     #Generic Bandwidth 
     b = (data.shape[0])**(-1/(data.shape[1]*5))
     #Generic Neighbors
-    neighbors = data.shape[1]-1
+    neighbors = data.shape[1]
     #Obtain Reversed Topological Sort
     sort = topo_sort(data,b, neighbors)
     print(sort)
