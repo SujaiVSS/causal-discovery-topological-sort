@@ -72,16 +72,15 @@ def leaf_hypothesis_test(k, data, b, l):
     '''
     #Initialization
     rows = data.shape[0]
-    score_sum = 0
-    cond_score_sum = 0
+    estimates = []
     #Estimating Score^2, Cond Score^2
     for i in range(rows):
         score = score_estim(k, data[i], data, b)
         cond_score = cond_score_estim(k, data[i], data, b, l)
-        score_sum += score**2
-        cond_score_sum += cond_score**2
+        estimates.append(abs(score-cond_score))
+
     #Cond Fisher Info to Fisher Info Ratio
-    return cond_score_sum/score_sum
+    return np.mean(estimates)
 
 def leaf_detection(data, b, l):
     '''
