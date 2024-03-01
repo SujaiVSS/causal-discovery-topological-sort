@@ -30,7 +30,7 @@ def score_estim(k, value, data, b):
     score_numerator = (1/b)*(np.sum(differences*kernels))
     return score_numerator/score_denominator
 
-def cond_score_estim(k, value, data, b, l):
+def cond_score_estim(k, value, data, tree, b, l):
     '''
     Inputs: 
     k - the column index of the variable whose score function we are estimating (int)
@@ -47,10 +47,10 @@ def cond_score_estim(k, value, data, b, l):
     #Setting x_{-k} 
     value_k = np.delete(value,k)
     #Removing x_k from data
-    data_k = np.delete(data,k,axis=1)
+    #data_k = np.delete(data,k,axis=1)
     #Finding the LNN of x_{-k}
-    tree = KDTree(data_k)
-    distances,indices =tree.query(value_k, k = l)
+    #tree = KDTree(data_k)
+    distances,indices =tree.query(value_k, k = l, workers = -1)
     data_lnn = data[indices, :]
     #Implementing Kernel Density Estimator for Score Function
     kernels = rbf_kernel(np.array([value]), data_lnn, 1/b)[0]
@@ -72,15 +72,21 @@ def leaf_hypothesis_test(k, data, b, l):
     '''
     #Initialization
     rows = data.shape[0]
-    estimates = []
+    scores = 0
+    cscores = 0
+    #Removing x_k from data
+    data_k = np.delete(data,k,axis=1)
+    #Finding the LNN of x_{-k}
+    tree = KDTree(data_k, balanced_tree = False, compact_nodes = True)
     #Estimating Score^2, Cond Score^2
     for i in range(rows):
         score = score_estim(k, data[i], data, b)
-        cond_score = cond_score_estim(k, data[i], data, b, l)
-        estimates.append(abs(score-cond_score))
+        cond_score = cond_score_estim(k, data[i], data, tree, b, l)
+        scores += score**2
+        cscores += cond_score**2
 
-    #Cond Fisher Info to Fisher Info Ratio
-    return np.mean(estimates)
+    #Cond Mutual Info to Uncond Mutual Info Ratio
+    return np.mean(cscores/scores)
 
 def leaf_detection(data, b, l):
     '''
