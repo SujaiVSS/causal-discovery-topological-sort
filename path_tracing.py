@@ -24,6 +24,7 @@ def edge_detection(a,b,parents,children,data, ind_collection):
     confounders = parents[a]
     #Potential Mediator Set
     mediators = parents[b] 
+    # object views vs copy constructing new objects
     cond_set = confounders.union(mediators)
     #Include only marginally dependent (on b) potential mediators and confounders
     cond_set = cond_set.intersection(ind_collection[b])
@@ -42,11 +43,12 @@ def path_tracing(topo_sort, data):
     '''
     #Initialization
     d = len(topo_sort)
+    #find out how to build xrange
     parents = [set() for _ in range(d)]
     children = [set() for _ in range(d)]
     ind_collection = marg_ind(data)
     #CIT Algorithm
-    for i in range(1,d,+1):
+    for i in range(1,d):
         b = topo_sort[i]
         for j in range(i-1,-1,-1):
             a = topo_sort[j]
@@ -115,7 +117,7 @@ start_time = time.time()
 #print(marg_ind(data))
 sort = [0,1,2,3]
 count = 0
-iter = 30
+iter = 1
 for i in range(iter):
     data = DAG()
     parents, descendants = path_tracing(sort, data)
