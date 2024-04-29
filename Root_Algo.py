@@ -5,6 +5,7 @@ from sklearn.kernel_ridge import KernelRidge
 from sklearn.model_selection import train_test_split
 from PyRKHSstats import hsic
 from conditional_independence import hsic_test
+from sklearn.linear_model import LinearRegression
 
 #This file implements a nonparametric method to identify root nodes of a linear non-gaussian noise 
 #model using KRR to identify features that always have independent residuals from pairwise regression
@@ -31,7 +32,7 @@ def marg_dep(data):
 
 
 #Root Estimation
-def root_detection(data, alpha = 0.005):
+def root_detection(data, alpha = 0.001):
     '''Intakes data and a threshold alpha, 
     and outputs a list of indices that corresponds to root nodes (roots),
     as well as a list of lists containing the marginal dependencies.'''
@@ -53,10 +54,13 @@ def root_detection(data, alpha = 0.005):
                 #krr = KernelRidge(kernel='rbf',alpha = 0.01, gamma = 0.01)
                 #Polynomial Kernel
                 #Train
-                krr = KernelRidge(kernel='polynomial',alpha = .01, degree = 1, coef0= 1)
-                krr.fit(X_train,y_train)
+                #krr = KernelRidge(kernel='polynomial',alpha = .01, degree = 1, coef0= 1)
+                #krr.fit(X_train,y_train)
                 #Test
-                y_pred = krr.predict(X_test)
+                #y_pred = krr.predict(X_test)
+                lr = LinearRegression()
+                lr.fit(X_train,y_train)
+                y_pred = lr.predict(X_test)
                 residuals = y_test - y_pred
                 #Check for independence of residuals with x_i
                 resid_data = np.hstack((X_test,residuals.reshape(-1,1)))
