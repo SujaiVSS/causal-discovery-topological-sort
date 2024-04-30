@@ -1,0 +1,169 @@
+---
+title: "igraph"
+output: html_document
+date: "2024-04-28"
+---
+
+```{r setup}
+
+library(igraph)
+
+```
+
+```{r test}
+
+# Generated directed acyclic Erdos-Renyi graph.
+g <- erdos.renyi.game(
+  n = 5,
+  p.or.m = 10,
+  type = "gnm",
+  directed = FALSE,
+  loops = FALSE
+)
+
+# Get adjacency matrix.
+adj <- get.adjacency(
+  g,
+  type = "both",
+  attr = NULL,
+  edges = FALSE,
+  names = TRUE,
+  sparse = FALSE
+)
+
+g
+adj
+
+
+
+```
+
+```{r generate}
+
+# Get random graphs and return dataframe of adjacency matrices.
+
+# 5 nodes, 5 edges.
+reps <- 10
+df_list = vector("list", length = reps)
+for (i in 1:reps) {
+
+  # Generated directed acyclic Erdos-Renyi graph.
+  g <- erdos.renyi.game(
+    n = 5,
+    p.or.m = 5,
+    type = "gnm",
+    directed = FALSE,
+    loops = FALSE
+  )
+  g <- as.directed(g, mode = "acyclic")
+  
+  # Get adjacency matrix.
+  adj <- get.adjacency(
+    g,
+    type = "both",
+    attr = NULL,
+    edges = FALSE,
+    names = TRUE,
+    sparse = FALSE
+  )
+  
+  # Save adjacency matrix.
+  df_adj <- data.frame(adj)
+  df_adj$Replicate <- i  # maybe you want to keep track of which iteration produced it?
+  df_list[[i]] <- df_adj
+  
+}
+
+df_5n_5m <- do.call(rbind, df_list)
+
+
+# 10 nodes, 10 edges.
+reps <- 10
+df_list = vector("list", length = reps)
+for (i in 1:reps) {
+
+  # Generated directed acyclic Erdos-Renyi graph.
+  g <- erdos.renyi.game(
+    n = 10,
+    p.or.m = 10,
+    type = "gnm",
+    directed = FALSE,
+    loops = FALSE
+  )
+  g <- as.directed(g, mode = "acyclic")
+  
+  # Get adjacency matrix.
+  adj <- get.adjacency(
+    g,
+    type = "both",
+    attr = NULL,
+    edges = FALSE,
+    names = TRUE,
+    sparse = FALSE
+  )
+  
+  # Save adjacency matrix.
+  df_adj <- data.frame(adj)
+  df_adj$Replicate <- i  # maybe you want to keep track of which iteration produced it?
+  df_list[[i]] <- df_adj
+  
+}
+
+df_10n_10m <- do.call(rbind, df_list)
+
+
+# 20 nodes, 20 edges.
+reps <- 20
+df_list = vector("list", length = reps)
+for (i in 1:reps) {
+
+  # Generated directed acyclic Erdos-Renyi graph.
+  g <- erdos.renyi.game(
+    n = 20,
+    p.or.m = 20,
+    type = "gnm",
+    directed = FALSE,
+    loops = FALSE
+  )
+  g <- as.directed(g, mode = "acyclic")
+  
+  # Get adjacency matrix.
+  adj <- get.adjacency(
+    g,
+    type = "both",
+    attr = NULL,
+    edges = FALSE,
+    names = TRUE,
+    sparse = FALSE
+  )
+  
+  # Save adjacency matrix.
+  df_adj <- data.frame(adj)
+  df_adj$Replicate <- i  # maybe you want to keep track of which iteration produced it?
+  df_list[[i]] <- df_adj
+  
+}
+
+df_20n_20m <- do.call(rbind, df_list)
+
+
+write.csv(df_5n_5m, "data/erdos_renyi/erdos_renyi_5n_5m.csv", row.names = FALSE)
+write.csv(df_10n_10m, "data/erdos_renyi/erdos_renyi_10n_10m.csv", row.names = FALSE)
+write.csv(df_20n_20m, "data/erdos_renyi/erdos_renyi_20n_20m.csv", row.names = FALSE)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
