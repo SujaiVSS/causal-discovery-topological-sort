@@ -30,7 +30,7 @@ def edge_detection(a,b,parents,children,data, ind_collection):
     cond_set = cond_set.intersection(ind_collection[b])
     fisherz_obj = CIT(data, "kci")
     pvalue = fisherz_obj(a,b,list(cond_set))
-    if pvalue < 0.05:
+    if pvalue < 0.01:
         parents[b].add(a)
         children[a].add(b)
     return parents, children
@@ -106,23 +106,24 @@ def DAG(n=1000):
      '''produces standardized data from custom DAGs'''
      #DAG Structure
      x = np.random.gamma(1,2,n)
-     y = 0.5*x+ np.random.gamma(1,2,n)
-     z = 0.3*y+0.3*x+np.random.gamma(1,2,n)
-     w = 0.3*y+0.3*x+np.random.gamma(1,2,n)
-     data = np.column_stack(standardize_vectors(x,y,z,w))
+     y = x+ np.random.gamma(1,2,n)
+     z = y+ np.random.gamma(1,2,n)
+     w = np.random.gamma(1,2,n)
+     p = x + z + w + np.random.gamma(1,2,n)
+     data = np.column_stack(standardize_vectors(x,y,z,w,p))
      return data
+
+
 
 #Testing
 start_time = time.time()
 #print(marg_ind(data))
-sort = [0,1,2,3]
+sort = [0,1,2,3,4]
 count = 0
-iter = 1
-for i in range(iter):
-    data = DAG()
-    parents, descendants = path_tracing(sort, data)
-    if parents == [set([]),set([0]),set([0,1]),set([0,1])]:
-        count +=1
 
-print("Accuracy:", count/iter)
+data = DAG()
+parents, children = path_tracing(sort, data)
+print(parents)
+print(children)
+    
 print(f"Runtime: {time.time() - start_time:.3f} s")
