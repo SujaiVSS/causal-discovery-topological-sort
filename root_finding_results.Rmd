@@ -1,0 +1,110 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-05-01"
+---
+
+```{r setup, include = FALSE}
+
+library(ggplot2)
+library(ggthemes)
+library(ashR)
+
+```
+
+```{r data}
+
+metrics <- c("Accuracy", "F1", "Precision", "Recall")
+
+##############
+# 5 node DAG
+##############
+
+# n = 500
+df_5n5m_500 <- data.frame(Metric = metrics,
+                          Value = c(0.52, 0.5688095238095238, 0.42333333333333334, 0.95))
+df_5n5m_500$Sample.Size <- 500
+
+# n = 1000
+df_5n5m_1k <- data.frame(Metric = metrics,
+                         Value = c(0.78, 0.7423809523809524, 0.625, 1.0))
+df_5n5m_1k$Sample.Size <- 1000
+
+# n = 5000
+df_5n5m_5k <- data.frame(Metric = metrics,
+                         Value = c(1.0, 1.0, 1.0, 1.0))
+df_5n5m_5k$Sample.Size <- 5000
+
+df_5 <- rbind(df_5n5m_500, df_5n5m_1k, df_5n5m_5k)
+df_5$Nodes <- "5 nodes"
+
+##############
+# 10 node DAG
+##############
+
+# n = 500
+df_10n10m_500 <- data.frame(Metric = metrics,
+                            Value = c(0.48999999999999994, 0.5916749916749916, 0.43476190476190474, 1.0))
+df_10n10m_500$Sample.Size <- 500
+
+# n = 1000
+df_10n10m_1k <- data.frame(Metric = metrics,
+                           Value = c(0.79, 0.7835897435897435, 0.6889285714285714, 0.975))
+df_10n10m_1k$Sample.Size <- 1000
+
+# n = 5000
+df_10n10m_5k <- data.frame(Metric = metrics,
+                           Value = c(1.0, 1.0, 1.0, 1.0))
+df_10n10m_5k$Sample.Size <- 5000
+
+df_10 <- rbind(df_10n10m_500, df_10n10m_1k, df_10n10m_5k)
+df_10$Nodes <- "10 nodes"
+
+##############
+# 20 node DAG
+##############
+
+# n = 500
+df_20n20m_500 <- data.frame(Metric = metrics,
+                            Value = c(0.5424999999999999, 0.6401261009521878, 0.47349630202958376, 1.0))
+df_20n20m_500$Sample.Size <- 500
+
+# n = 1000
+df_20n20m_1k <- data.frame(Metric = metrics,
+                           Value = c(0.8, 0.804543680819761, 0.6844115606615607, 0.99375))
+df_20n20m_1k$Sample.Size <- 1000
+
+# n = 5000
+df_20n20m_5k <- data.frame(Metric = metrics,
+                           Value = c(0.9925, 0.9898793363499246, 1.0, 0.9810515873015874)) 
+df_20n20m_5k$Sample.Size <- 5000
+
+df_20 <- rbind(df_20n20m_500, df_20n20m_1k, df_20n20m_5k)
+df_20$Nodes <- "20 nodes"
+
+
+df <- rbind(df_5, df_10, df_20)
+df$Nodes <- factor(df$Nodes, levels = c("5 nodes", "10 nodes", "20 nodes"))
+
+```
+
+```{r plot}
+
+plot_metrics <- ggplot(df, aes(x = Sample.Size, y = Value, color = Metric)) +
+                  geom_line(size = 0.75) +
+                  geom_point(aes(shape = Metric), size = 3) +
+                  facet_wrap(~Nodes) +
+                  theme_few() +
+                  labs(x = "\nSample size", y = "Value\n") +
+                  scale_shape_manual(values = c(15,16,17,18)) +
+                  theme(strip.text = element_text(face = "bold", size = 16), 
+                        axis.title = element_text(face = "bold", size = 14),
+                        legend.text = element_text(size = 12),
+                        legend.title = element_blank(),
+                        legend.position = "bottom",
+                        axis.text = element_text(size = 11))
+plot_metrics
+ggsave("root_finding_prelim.jpg", width = 10, height = 4)
+
+
+```
